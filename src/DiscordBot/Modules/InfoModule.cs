@@ -8,6 +8,6 @@ namespace DiscordBot.Modules
         [Command("info")]
         public Task Info()
             => ReplyAsync(
-                $"Hello, World!");
+                $"A simple chat filter bot for Flare");
     }
 }
