@@ -26,6 +26,7 @@ namespace DiscordBot
             var services = ConfigureServices();
             services.GetRequiredService<LogService>();
             await services.GetRequiredService<CommandHandlingService>().InitializeAsync(services);
+            await services.GetRequiredService<MessageFilterService>().InitializeAsync(services);
 
             await _client.LoginAsync(TokenType.Bot, _config["token"]);
             await _client.StartAsync();
@@ -40,6 +41,7 @@ namespace DiscordBot
                 .AddSingleton(_client)
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandlingService>()
+                .AddSingleton<MessageFilterService>()
                 // Logging
                 .AddLogging()
                 .AddSingleton<LogService>()

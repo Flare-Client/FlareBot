@@ -2,6 +2,8 @@
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,9 +24,23 @@ namespace DiscordBot.Services
             _discord.MessageReceived += MessageReceived;
         }
 
-        private Task MessageReceived(SocketMessage arg)
+        public async Task InitializeAsync(IServiceProvider provider)
         {
-            throw new NotImplementedException();
+            _provider = provider;
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), provider);
+            // Add additional initialization code here...
+        }
+
+        private async Task MessageReceived(SocketMessage rawMessage)
+        {
+            string[] blacklist = File.ReadAllLines("WordBlacklist.txt");
+            foreach(string bad in blacklist)
+            {
+                if (rawMessage.Content.ToLower().Contains(bad.ToLower()))
+                {
+                    rawMessage.DeleteAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+                }
+            }
         }
     }
 }
